@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KetikCepat - Tes Kecepatan Mengetik</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #fdf8f0;
+      --bg2:       #fff9f2;
+      --surface:   #ffffff;
+      --border:    #e8dfd0;
+      --border2:   #f0e8da;
+      --ink:       #1a1208;
+      --ink2:      #3d3020;
+      --ink3:      #7a6a52;
+      --ink4:      #b8a898;
+      --coral:     #ff5c3a;
+      --coral-lt:  #fff0ec;
+      --coral-mid: #ffd5cc;
+      --teal:      #00b4a0;
+      --teal-lt:   #e0faf7;
+      --teal-mid:  #99e8e0;
+      --gold:      #f5a623;
+      --gold-lt:   #fff8e6;
+      --gold-mid:  #fce0a0;
+      --violet:    #7c4dff;
+      --violet-lt: #f0ecff;
+      --shadow-sm: 0 2px 8px rgba(26,18,8,0.07);
+      --shadow-md: 0 6px 24px rgba(26,18,8,0.11);
+      --shadow-lg: 0 16px 48px rgba(26,18,8,0.15);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      background-image:
+        radial-gradient(circle at 12% 8%,  rgba(255,92,58,0.09)  0%, transparent 42%),
+        radial-gradient(circle at 88% 18%, rgba(0,180,160,0.08)  0%, transparent 40%),
+        radial-gradient(circle at 50% 92%, rgba(245,166,35,0.08) 0%, transparent 44%);
+      color: var(--ink);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: radial-gradient(circle, rgba(184,168,152,0.4) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .container {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 28px 20px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* HEADER */
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      color: var(--ink);
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+    .logo em {
+      font-style: normal;
+      color: var(--coral);
+      position: relative;
+    }
+    .logo em::after {
+      content: '';
+      position: absolute;
+      bottom: 3px; left: 0; right: 0;
+      height: 4px;
+      background: var(--coral);
+      border-radius: 2px;
+      opacity: 0.3;
+    }
+    .tagline {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--ink4);
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      margin-top: 5px;
+    }
+    .status-badge {
+      background: var(--coral-lt);
+      border: 1.5px solid var(--coral-mid);
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--coral);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      align-self: center;
+      transition: all 0.3s;
+    }
+    .status-badge.running {
+      background: var(--teal-lt);
+      border-color: var(--teal-mid);
+      color: var(--teal);
+    }
+    .status-badge.done {
+      background: var(--gold-lt);
+      border-color: var(--gold-mid);
+      color: var(--gold);
+    }
+
+    /* STATS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border2);
+      border-radius: 18px;
+      padding: 18px 12px 14px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      border-radius: 18px 18px 0 0;
+    }
+    .c-coral::before  { background: linear-gradient(90deg, var(--coral), #ff8a72); }
+    .c-teal::before   { background: linear-gradient(90deg, var(--teal), #00d4be); }
+    .c-gold::before   { background: linear-gradient(90deg, var(--gold), #ffc94d); }
+    .c-violet::before { background: linear-gradient(90deg, var(--violet), #a67cff); }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+    .stat-card.pulse { animation: cpulse 0.35s ease; }
+    @keyframes cpulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+    .stat-icon { font-size: 1.15rem; margin-bottom: 6px; display: block; }
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: clamp(1.5rem, 3.8vw, 2.2rem);
+      line-height: 1;
+      margin-bottom: 4px;
+      transition: color 0.3s;
+    }
+    .c-coral  .stat-value { color: var(--coral); }
+    .c-teal   .stat-value { color: var(--teal); }
+    .c-gold   .stat-value { color: var(--gold); }
+    .c-violet .stat-value { color: var(--violet); }
+    .stat-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--ink4);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* CONFIG */
+    .config-row {
+      background: var(--surface);
+      border: 1.5px solid var(--border2);
+      border-radius: 16px;
+      padding: 14px 20px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .cfg-group { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .cfg-label {
+      font-size: 0.67rem;
+      font-weight: 800;
+      color: var(--ink3);
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+    .divider-v { width: 1.5px; height: 26px; background: var(--border2); flex-shrink: 0; }
+    .pill {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      color: var(--ink3);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .pill:hover { border-color: var(--coral); color: var(--coral); background: var(--coral-lt); }
+    .pill.on-coral { background: var(--coral); color: #fff; border-color: var(--coral); }
+    .pill.on-teal  { background: var(--teal);  color: #fff; border-color: var(--teal); }
+
+    /* PROGRESS */
+    .progress-track {
+      height: 6px;
+      background: var(--border2);
+      border-radius: 999px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--coral), var(--gold));
+      border-radius: 999px;
+      transition: width 0.2s ease;
+      box-shadow: 0 0 6px rgba(255,92,58,0.4);
+    }
+
+    /* TYPING PANEL */
+    .typing-panel {
+      background: var(--surface);
+      border: 2px solid var(--border2);
+      border-radius: 22px;
+      padding: 32px 32px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .typing-panel.running {
+      border-color: var(--teal);
+      box-shadow: var(--shadow-md), 0 0 0 4px rgba(0,180,160,0.1);
+    }
+    .typing-panel::after {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,92,58,0.07), transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: absolute; inset: 0;
+      background: rgba(253,248,240,0.93);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      backdrop-filter: blur(3px);
+    }
+    .overlay.hidden { display: none; }
+    .overlay-inner { text-align: center; padding: 20px; }
+    .overlay-emoji {
+      font-size: 3.2rem;
+      display: block;
+      margin-bottom: 12px;
+      animation: float 2.5s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    .overlay-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 1.7rem;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .overlay-sub {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--ink3);
+    }
+
+    /* Prompt */
+    #prompt-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(0.9rem, 2.1vw, 1.06rem);
+      line-height: 2.1;
+      color: var(--ink4);
+      user-select: none;
+      word-break: break-word;
+      margin-bottom: 22px;
+      min-height: 76px;
+    }
+    #prompt-text .ch { transition: all 0.07s; border-radius: 3px; padding: 0 0.5px; }
+    #prompt-text .ch.correct { color: var(--ink2); }
+    #prompt-text .ch.wrong   { color: var(--coral); background: var(--coral-lt); text-decoration: underline wavy var(--coral); }
+    #prompt-text .ch.cursor  { color: #fff; background: var(--teal); }
+    #prompt-text .ch.untyped { color: var(--ink4); }
+
+    /* Input */
+    #typing-input {
+      width: 100%;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      color: var(--ink);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(0.85rem, 2vw, 0.96rem);
+      font-weight: 500;
+      padding: 13px 18px;
+      outline: none;
+      resize: none;
+      height: 54px;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      caret-color: var(--teal);
+    }
+    #typing-input::placeholder { color: var(--ink4); }
+    #typing-input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(0,180,160,0.12);
+      background: #fff;
+    }
+    #typing-input.has-err {
+      border-color: var(--coral);
+      box-shadow: 0 0 0 4px rgba(255,92,58,0.1);
+    }
+
+    /* ACTIONS */
+    .action-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn-main {
+      background: var(--coral);
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 0.87rem;
+      padding: 13px 32px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(255,92,58,0.32);
+    }
+    .btn-main:hover:not(:disabled) {
+      background: #ff4220;
+      box-shadow: 0 6px 24px rgba(255,92,58,0.48);
+      transform: translateY(-2px);
+    }
+    .btn-main:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+    .btn-ghost {
+      background: var(--surface);
+      color: var(--ink3);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 13px 22px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--ink3); color: var(--ink); background: var(--bg2); }
+    .shortcut-hint {
+      margin-left: auto;
+      font-size: 0.67rem;
+      font-weight: 600;
+      color: var(--ink4);
+    }
+    .shortcut-hint kbd {
+      display: inline-block;
+      background: var(--bg2);
+      border: 1.5px solid var(--border);
+      border-radius: 5px;
+      padding: 2px 7px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--ink3);
+    }
+
+    /* RESULT MODAL */
+    .modal-backdrop {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(26,18,8,0.52);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(6px);
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      background: var(--surface);
+      border-radius: 24px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      animation: mpop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes mpop { from{transform:scale(0.82) translateY(24px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
+    .modal-head {
+      padding: 36px 36px 28px;
+      text-align: center;
+      background: linear-gradient(135deg, var(--coral-lt) 0%, var(--teal-lt) 100%);
+      border-bottom: 1.5px solid var(--border2);
+    }
+    .modal-grade {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 5.5rem;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.55rem;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .modal-meta {
+      font-size: 0.73rem;
+      font-weight: 700;
+      color: var(--ink3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .modal-body { padding: 28px 36px 32px; }
+    .res-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+    .res-item {
+      background: var(--bg);
+      border: 1.5px solid var(--border2);
+      border-radius: 14px;
+      padding: 16px 12px;
+      text-align: center;
+    }
+    .res-v {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 2rem;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .res-l {
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--ink4);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .modal-acts { display: flex; gap: 12px; }
+    .modal-acts .btn-main { flex: 1; }
+
+    /* HISTORY */
+    .history-section { margin-top: 48px; }
+    .sec-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .sec-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: var(--ink);
+    }
+    .clr-btn {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--ink4);
+      background: none;
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .clr-btn:hover { color: var(--coral); }
+    .hist-list { display: flex; flex-direction: column; gap: 10px; }
+    .hist-item {
+      background: var(--surface);
+      border: 1.5px solid var(--border2);
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hist-item:hover { transform: translateX(5px); box-shadow: var(--shadow-md); }
+    .hist-rank {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      min-width: 32px;
+      text-align: center;
+    }
+    .hist-wpm {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 1.45rem;
+      color: var(--coral);
+      min-width: 82px;
+    }
+    .hist-wpm small {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.65rem;
+      color: var(--ink4);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      vertical-align: middle;
+      margin-left: 3px;
+    }
+    .hist-meta { font-size: 0.77rem; font-weight: 600; color: var(--ink3); flex: 1; }
+    .hist-acc {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--teal);
+      background: var(--teal-lt);
+      border: 1.5px solid var(--teal-mid);
+      border-radius: 999px;
+      padding: 4px 12px;
+    }
+    .hist-grade {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 1.15rem;
+      min-width: 28px;
+      text-align: right;
+    }
+    .empty-hist {
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--surface);
+      border: 2px dashed var(--border);
+      border-radius: 18px;
+    }
+    .empty-hist .ei { font-size: 2.5rem; margin-bottom: 10px; }
+    .empty-hist p { font-size: 0.88rem; font-weight: 600; color: var(--ink3); line-height: 1.6; }
+
+    /* FOOTER */
+    footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1.5px solid var(--border2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .credit { font-size: 0.8rem; font-weight: 700; color: var(--ink3); }
+    .credit strong { color: var(--coral); }
+    .version {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--ink4);
+      background: var(--bg2);
+      border: 1.5px solid var(--border2);
+      border-radius: 999px;
+      padding: 4px 14px;
+      letter-spacing: 0.06em;
+    }
+
+    /* TOAST */
+    #toast {
+      position: fixed;
+      bottom: 32px; left: 50%;
+      transform: translateX(-50%) translateY(18px);
+      background: var(--ink);
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 11px 26px;
+      border-radius: 999px;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.34,1.3,0.64,1);
+      z-index: 5000;
+      white-space: nowrap;
+      box-shadow: var(--shadow-lg);
+      pointer-events: none;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* LIVE DOT */
+    .live-dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--teal);
+      margin-right: 7px;
+      animation: bdot 1s step-end infinite;
+      vertical-align: middle;
+    }
+    @keyframes bdot { 0%,100%{opacity:1} 50%{opacity:0.15} }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .typing-panel { padding: 22px 16px 20px; }
+      .modal-head { padding: 26px 22px 22px; }
+      .modal-body { padding: 22px 22px 26px; }
+      .modal-grade { font-size: 4rem; }
+      .shortcut-hint { display: none; }
+      .config-row { gap: 12px; }
+      header { margin-bottom: 28px; }
+      .hist-item { flex-wrap: wrap; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div>
+      <div class="logo">Ketik<em>Cepat</em></div>
+      <div class="tagline">Tes Kecepatan Mengetik Bahasa Indonesia</div>
+    </div>
+    <div class="status-badge" id="badge">⏸ Siap</div>
+  </header>
+
+  <div class="stats-grid">
+    <div class="stat-card c-coral">
+      <span class="stat-icon">⚡</span>
+      <div class="stat-value" id="sv-wpm">0</div>
+      <div class="stat-label">Kata / Menit</div>
+    </div>
+    <div class="stat-card c-teal">
+      <span class="stat-icon">🎯</span>
+      <div class="stat-value" id="sv-acc">100%</div>
+      <div class="stat-label">Akurasi</div>
+    </div>
+    <div class="stat-card c-gold">
+      <span class="stat-icon">⏱</span>
+      <div class="stat-value" id="sv-time">60</div>
+      <div class="stat-label">Detik Tersisa</div>
+    </div>
+    <div class="stat-card c-violet">
+      <span class="stat-icon">🔥</span>
+      <div class="stat-value" id="sv-streak">0</div>
+      <div class="stat-label">Streak Benar</div>
+    </div>
+  </div>
+
+  <div class="config-row">
+    <div class="cfg-group">
+      <span class="cfg-label">Waktu</span>
+      <button class="pill" data-time="30">30 dtk</button>
+      <button class="pill on-coral" data-time="60">60 dtk</button>
+      <button class="pill" data-time="120">2 mnt</button>
+    </div>
+    <div class="divider-v"></div>
+    <div class="cfg-group">
+      <span class="cfg-label">Mode</span>
+      <button class="pill" data-mode="mudah">Mudah</button>
+      <button class="pill on-teal" data-mode="sedang">Sedang</button>
+      <button class="pill" data-mode="sulit">Sulit</button>
+    </div>
+  </div>
+
+  <div class="progress-track"><div id="progress-bar"></div></div>
+
+  <div class="typing-panel" id="panel">
+    <div class="overlay" id="overlay">
+      <div class="overlay-inner">
+        <span class="overlay-emoji">⌨️</span>
+        <div class="overlay-title">Siap Mengetik?</div>
+        <div class="overlay-sub">Tekan <strong>Mulai Tes</strong> atau klik di sini</div>
+      </div>
+    </div>
+    <div id="prompt-text"></div>
+    <textarea id="typing-input" placeholder="Mulai mengetik di sini..." spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea>
+  </div>
+
+  <div class="action-row">
+    <button class="btn-main" id="btn-start">▶ Mulai Tes</button>
+    <button class="btn-ghost" id="btn-reset">↺ Ulang</button>
+    <span class="shortcut-hint"><kbd>Tab</kbd> lalu <kbd>Enter</kbd> untuk ulang cepat</span>
+  </div>
+
+  <div class="history-section">
+    <div class="sec-head">
+      <div class="sec-title">🏆 Riwayat Terbaik</div>
+      <button class="clr-btn" id="btn-clr">Hapus Semua</button>
+    </div>
+    <div class="hist-list" id="hist-list"></div>
+  </div>
+
+  <footer>
+    <div class="credit">Dibuat oleh <strong>Agus Satria Adhitama</strong></div>
+    <div class="version">KetikCepat</div>
+  </footer>
+</div>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-grade" id="mg">A</div>
+      <div class="modal-title" id="mt">Keren Banget!</div>
+      <div class="modal-meta" id="mm">Tes Selesai</div>
+    </div>
+    <div class="modal-body">
+      <div class="res-grid">
+        <div class="res-item"><div class="res-v" id="rw">0</div><div class="res-l">Kata / Menit</div></div>
+        <div class="res-item"><div class="res-v" id="ra">0%</div><div class="res-l">Akurasi</div></div>
+        <div class="res-item"><div class="res-v" id="rc">0</div><div class="res-l">Karakter Benar</div></div>
+        <div class="res-item"><div class="res-v" id="re">0</div><div class="res-l">Kesalahan</div></div>
+      </div>
+      <div class="modal-acts">
+        <button class="btn-main" id="btn-retry">▶ Coba Lagi</button>
+        <button class="btn-ghost" id="btn-close">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const TEKS = {
+  mudah: [
+    "Buku itu ada di atas meja kayu.",
+    "Ibu memasak nasi goreng pagi ini.",
+    "Anak-anak bermain di halaman belakang rumah.",
+    "Kucing itu tidur di bawah pohon rindang.",
+    "Air sungai jernih terasa sangat segar.",
+    "Matahari terbit dari arah timur setiap pagi.",
+    "Kami pergi ke pasar setiap hari Minggu.",
+    "Dia membaca koran sambil menikmati kopi hangat.",
+    "Bunga mawar merah di taman itu sangat indah.",
+    "Hujan turun deras sejak tadi malam.",
+    "Nenek rajin menyiram bunga setiap pagi hari.",
+    "Adik belajar matematika dengan tekun dan giat.",
+    "Ayah pulang kerja tepat pukul enam sore.",
+    "Langit biru cerah tanpa awan hari ini.",
+    "Kami makan siang bersama di kantin sekolah.",
+  ],
+  sedang: [
+    "Keberhasilan tidak datang tanpa kerja keras dan pengorbanan yang tulus.",
+    "Teknologi informasi terus berkembang pesat dalam beberapa tahun terakhir ini.",
+    "Pendidikan adalah investasi terbaik yang bisa diberikan orang tua kepada anaknya.",
+    "Kebersihan lingkungan adalah tanggung jawab setiap warga yang peduli pada sesama.",
+    "Persahabatan yang tulus akan bertahan melalui segala rintangan dan cobaan hidup.",
+    "Indonesia memiliki kekayaan budaya yang sangat beragam dari Sabang sampai Merauke.",
+    "Membaca buku setiap hari dapat meningkatkan wawasan dan kemampuan berpikir kritis.",
+    "Generasi muda adalah tulang punggung bangsa yang harus dibina dengan penuh kasih.",
+    "Alam Indonesia yang indah perlu dijaga untuk generasi yang akan datang nanti.",
+    "Disiplin waktu adalah kunci sukses dalam menjalani kehidupan sehari-hari yang produktif.",
+    "Inovasi dan kreativitas sangat dibutuhkan untuk menghadapi tantangan zaman modern ini.",
+    "Bahasa Indonesia merupakan identitas nasional yang wajib dijunjung tinggi oleh semua.",
+  ],
+  sulit: [
+    "Implementasi kebijakan pembangunan infrastruktur nasional memerlukan koordinasi lintas sektoral yang komprehensif.",
+    "Perkembangan kecerdasan buatan membawa konsekuensi epistemologis yang menuntut reorientasi paradigma pendidikan kontemporer.",
+    "Keberagaman etnis dan budaya di Nusantara merupakan aset fundamental dalam membangun peradaban bangsa bermartabat.",
+    "Transformasi digital membutuhkan kompetensi literasi teknologi yang merata di seluruh lapisan masyarakat Indonesia.",
+    "Pengelolaan sumber daya alam berkelanjutan adalah prasyarat tercapainya keseimbangan ekosistem dan kemakmuran bersama.",
+    "Desentralisasi kewenangan pemerintahan daerah diharapkan mampu mengakselerasi pembangunan yang berkeadilan dan merata.",
+    "Rekonstruksi narasi sejarah nasional perlu dilakukan secara kritis berdasarkan fakta empiris yang sahih.",
+    "Kolaborasi antardisiplin ilmu menjadi keharusan dalam memecahkan permasalahan sosial yang kompleks dan multidimensional.",
+  ],
+};
+
+let S = {
+  text:'', typed:'', correct:0, errors:0, streak:0,
+  dur:60, left:60, mode:'sedang', running:false, done:false, timer:null
+};
+let hist = JSON.parse(localStorage.getItem('kc3') || '[]');
+
+function buildText(m) {
+  const p = TEKS[m]; let o = '';
+  while(o.length < 220) o += (o?' ':'')+p[Math.floor(Math.random()*p.length)];
+  return o;
+}
+function wpm(c,s){ return s>0?Math.round((c/5)/(s/60)):0; }
+function acc(){ const t=S.correct+S.errors; return t===0?100:Math.round((S.correct/t)*100); }
+function grade(w,a){
+  if(w>=80&&a>=95) return {g:'S',c:'#f5a623',msg:'Luar Biasa! 🌟'};
+  if(w>=60&&a>=90) return {g:'A',c:'#ff5c3a',msg:'Keren Banget! 🔥'};
+  if(w>=40&&a>=80) return {g:'B',c:'#00b4a0',msg:'Bagus! Terus Latihan! 💪'};
+  if(w>=25&&a>=68) return {g:'C',c:'#7c4dff',msg:'Lumayan! Bisa Lebih Baik! ✨'};
+  return {g:'D',c:'#b8a898',msg:'Jangan Menyerah! 😊'};
+}
+function toast(m){
+  const e=document.getElementById('toast');
+  e.textContent=m; e.classList.add('show');
+  setTimeout(()=>e.classList.remove('show'),2200);
+}
+
+function renderPrompt(){
+  const {text,typed}=S;
+  let h='';
+  for(let i=0;i<text.length;i++){
+    const ch=text[i]===' '?'&nbsp;':text[i];
+    if(i<typed.length) h+=`<span class="ch ${typed[i]===text[i]?'correct':'wrong'}">${ch}</span>`;
+    else if(i===typed.length) h+=`<span class="ch cursor">${ch}</span>`;
+    else h+=`<span class="ch untyped">${ch}</span>`;
+  }
+  document.getElementById('prompt-text').innerHTML=h;
+}
+
+function updateUI(){
+  const elapsed=S.dur-S.left;
+  const w=wpm(S.correct,elapsed);
+  const a=acc();
+  document.getElementById('sv-wpm').textContent=w;
+  document.getElementById('sv-acc').textContent=a+'%';
+  document.getElementById('sv-time').textContent=S.left;
+  document.getElementById('sv-streak').textContent=S.streak;
+  const pct=(S.typed.length/S.text.length)*100;
+  document.getElementById('progress-bar').style.width=Math.min(pct,100)+'%';
+  if(S.left<=10) document.getElementById('sv-time').style.color='var(--coral)';
+}
+
+function renderHist(){
+  const el=document.getElementById('hist-list');
+  if(!hist.length){
+    el.innerHTML=`<div class="empty-hist"><div class="ei">📋</div><p>Belum ada riwayat.<br>Selesaikan satu sesi untuk mulai mencatat!</p></div>`;
+    return;
+  }
+  const sorted=[...hist].sort((a,b)=>b.wpm-a.wpm);
+  const medals=['🥇','🥈','🥉'];
+  el.innerHTML=sorted.map((h,i)=>{
+    const gi=grade(h.wpm,h.acc);
+    return `<div class="hist-item">
+      <span class="hist-rank">${medals[i]||'#'+(i+1)}</span>
+      <div class="hist-wpm">${h.wpm}<small>KPM</small></div>
+      <div class="hist-meta">${h.mode} · ${h.dur}dtk · ${h.date}</div>
+      <div class="hist-acc">${h.acc}%</div>
+      <div class="hist-grade" style="color:${gi.c}">${h.grade}</div>
+    </div>`;
+  }).join('');
+}
+
+function init(){
+  clearInterval(S.timer);
+  S={...S,text:buildText(S.mode),typed:'',correct:0,errors:0,streak:0,
+     left:S.dur,running:false,done:false,timer:null};
+  const inp=document.getElementById('typing-input');
+  inp.value=''; inp.disabled=false; inp.classList.remove('has-err');
+  document.getElementById('progress-bar').style.width='0%';
+  document.getElementById('sv-time').style.color='';
+  document.getElementById('panel').classList.remove('running');
+  const b=document.getElementById('badge');
+  b.textContent='⏸ Siap'; b.className='status-badge';
+  const ov=document.getElementById('overlay');
+  ov.classList.remove('hidden');
+  ov.innerHTML=`<div class="overlay-inner">
+    <span class="overlay-emoji">⌨️</span>
+    <div class="overlay-title">Siap Mengetik?</div>
+    <div class="overlay-sub">Tekan <strong>Mulai Tes</strong> atau klik di sini</div>
+  </div>`;
+  const sb=document.getElementById('btn-start');
+  sb.textContent='▶ Mulai Tes'; sb.disabled=false;
+  renderPrompt(); updateUI();
+}
+
+function start(){
+  if(S.running||S.done) return;
+  S.running=true;
+  document.getElementById('overlay').classList.add('hidden');
+  document.getElementById('panel').classList.add('running');
+  const b=document.getElementById('badge');
+  b.innerHTML='<span class="live-dot"></span>Berlangsung';
+  b.className='status-badge running';
+  document.getElementById('btn-start').textContent='⏹ Berlangsung...';
+  document.getElementById('btn-start').disabled=true;
+  document.getElementById('typing-input').focus();
+  S.timer=setInterval(()=>{ S.left--; updateUI(); if(S.left<=0) finish(); },1000);
+}
+
+function finish(){
+  clearInterval(S.timer);
+  S.running=false; S.done=true;
+  document.getElementById('typing-input').disabled=true;
+  document.getElementById('panel').classList.remove('running');
+  const b=document.getElementById('badge');
+  b.textContent='✅ Selesai'; b.className='status-badge done';
+  document.getElementById('btn-start').textContent='▶ Mulai Tes';
+  document.getElementById('btn-start').disabled=false;
+  const w=wpm(S.correct,S.dur), a=acc(), gi=grade(w,a);
+  document.getElementById('mg').textContent=gi.g;
+  document.getElementById('mg').style.color=gi.c;
+  document.getElementById('mt').textContent=gi.msg;
+  document.getElementById('mm').textContent=`Mode: ${S.mode} · ${S.dur} detik`;
+  document.getElementById('rw').textContent=w;
+  document.getElementById('ra').textContent=a+'%';
+  document.getElementById('rc').textContent=S.correct;
+  document.getElementById('re').textContent=S.errors;
+  document.getElementById('modal').classList.add('show');
+  const entry={wpm:w,acc:a,grade:gi.g,correct:S.correct,errors:S.errors,mode:S.mode,dur:S.dur,
+    date:new Date().toLocaleString('id-ID',{dateStyle:'short',timeStyle:'short'})};
+  hist.unshift(entry);
+  if(hist.length>10) hist.pop();
+  localStorage.setItem('kc3',JSON.stringify(hist));
+  renderHist();
+}
+
+document.getElementById('typing-input').addEventListener('input',function(){
+  if(!S.running||S.done) return;
+  const typed=this.value;
+  S.typed=typed;
+  let c=0,e=0,s=0;
+  for(let i=0;i<typed.length;i++){
+    if(typed[i]===S.text[i]){c++;s++;}
+    else{e++;s=0;}
+  }
+  S.correct=c; S.errors=e; S.streak=s;
+  const last=typed[typed.length-1], exp=S.text[typed.length-1];
+  this.classList.toggle('has-err',typed.length>0&&last!==exp);
+  renderPrompt(); updateUI();
+  if(s>0&&s%10===0){
+    const card=document.querySelector('.c-violet');
+    card.classList.remove('pulse'); void card.offsetWidth; card.classList.add('pulse');
+    toast('🔥 Streak '+s+' karakter benar!');
+  }
+  if(typed.length>=S.text.length){
+    this.value=''; S.typed=''; S.text=buildText(S.mode);
+    document.getElementById('progress-bar').style.width='0%';
+    renderPrompt(); toast('✓ Lanjut ke teks berikutnya!');
+  }
+});
+
+document.getElementById('btn-start').addEventListener('click',()=>{ if(!S.running&&!S.done) start(); });
+document.getElementById('btn-reset').addEventListener('click',()=>{ document.getElementById('modal').classList.remove('show'); init(); });
+document.getElementById('btn-retry').addEventListener('click',()=>{ document.getElementById('modal').classList.remove('show'); init(); setTimeout(start,60); });
+document.getElementById('btn-close').addEventListener('click',()=>{ document.getElementById('modal').classList.remove('show'); init(); });
+document.getElementById('panel').addEventListener('click',()=>{ if(!S.running&&!S.done) start(); });
+document.getElementById('btn-clr').addEventListener('click',()=>{
+  if(!hist.length) return;
+  if(confirm('Hapus semua riwayat?')){ hist=[]; localStorage.removeItem('kc3'); renderHist(); toast('Riwayat dihapus'); }
+});
+
+document.querySelectorAll('[data-time]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-time]').forEach(b=>b.classList.remove('on-coral','on-teal'));
+    btn.classList.add('on-coral');
+    S.dur=parseInt(btn.dataset.time);
+    if(!S.running) init();
+  });
+});
+
+document.querySelectorAll('[data-mode]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-mode]').forEach(b=>b.classList.remove('on-coral','on-teal'));
+    btn.classList.add('on-teal');
+    S.mode=btn.dataset.mode;
+    if(!S.running) init();
+    toast('Mode: '+S.mode);
+  });
+});
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Tab'){ e.preventDefault(); document.getElementById('btn-reset').focus(); }
+  if(e.key==='Enter'&&document.activeElement===document.getElementById('btn-reset')){
+    e.preventDefault(); document.getElementById('modal').classList.remove('show'); init();
+  }
+});
+
+renderHist(); init();
+</script>
+</body>
+</html>
