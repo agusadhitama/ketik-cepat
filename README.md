@@ -1,4 +1,4 @@
-# ⌨️ KetikCepat
+# KetikCepat
 
 > **Tes kecepatan mengetik Bahasa Indonesia** ringan, cepat, dan bisa langsung dipakai tanpa instalasi apapun.
 
