@@ -12,7 +12,7 @@
 
 ## 🌐 Demo Langsung
 
-**[▶ Coba KetikCepat di sini](https://agussatria.github.io/ketik-cepat)**
+**[▶ Coba KetikCepat di sini](https://agusadhitama.github.io/ketik-cepat)**
 
 ---
 
@@ -61,7 +61,7 @@
 ### Opsi 1 Download langsung
 ```bash
 # Clone repo ini
-git clone https://github.com/agussatria/ketik-cepat.git
+git clone https://github.com/agusadhitama/ketik-cepat.git
 
 # Buka file di browser
 open index.html
