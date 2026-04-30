@@ -12,7 +12,7 @@
 
 ## 🌐 Demo Langsung
 
-**[▶ Coba KetikCepat di sini](https://agusadhitama.github.io/ketik-cepat)**
+**[COBA KETIKCEPAT KLIK DISINI](https://agusadhitama.github.io/ketik-cepat)**
 
 ---
 
